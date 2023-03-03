@@ -139,8 +139,14 @@ var existingClusters = []*v1.ManagedCluster{
 }
 
 func TestMain(m *testing.M) {
-	v1.AddToScheme(cliScheme.Scheme)
-	AddToScheme(cliScheme.Scheme)
+	if err := v1.AddToScheme(cliScheme.Scheme); err != nil {
+		klog.Errorf("Failed adding cluster to scheme, %v", err)
+		os.Exit(1)
+	}
+	if err := AddToScheme(cliScheme.Scheme); err != nil {
+		klog.Errorf("Failed adding set to scheme, %v", err)
+		os.Exit(1)
+	}
 
 	if err := v1.Install(scheme); err != nil {
 		klog.Errorf("Failed adding cluster to scheme, %v", err)
